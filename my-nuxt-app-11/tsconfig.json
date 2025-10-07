@@ -1,0 +1,36 @@
+
+
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"],
+      "~/*": ["./*"]
+    },
+    "lib": ["ESNext", "DOM"]
+  },
+  "exclude": ["node_modules", ".nuxt", "dist"],
+  "include": [
+    "plugins/**/*.ts",
+    "composables/**/*.ts",
+    "stores/**/*.ts",
+    "pages/**/*.vue",
+    "components/**/*.vue",
+    "nuxt.config.ts"
+  ],
+  "references": [
+    { "path": "./.nuxt/tsconfig.app.json" },
+    { "path": "./.nuxt/tsconfig.server.json" },
+    { "path": "./.nuxt/tsconfig.shared.json" },
+    { "path": "./.nuxt/tsconfig.node.json" }
+  ]
+}
+

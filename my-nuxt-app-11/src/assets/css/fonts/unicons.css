@@ -1,0 +1,11 @@
+/* unicons.css - dùng font local */
+@font-face{
+  font-family: "Unicons";
+  src: url("../../fonts/unicons/Unicons.woff2") format("woff2"); /* ⬅️ đường dẫn tương đối từ CSS tới font */
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* base cho các thẻ <i class="uil ..."> */
+.uil{ font-family:"Unicons" !important; font-style:normal; line-height:1; display:inline-block; }
