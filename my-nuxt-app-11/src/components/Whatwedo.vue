@@ -1,55 +1,83 @@
 <template>
-    <section class="wrapper bg-gradient-primary">
-      <div class="container pt-12 pt-lg-8 pb-14 pb-md-17">
-        <div class="row text-center">
-          <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
-            <h2 class="fs-16 text-uppercase text-primary mb-3">What We Do?</h2>
-            <h3 class="display-3 mb-10 px-xxl-10">The service we offer is specifically designed to meet your needs.</h3>
-          </div>
-          <!-- /column -->
+  <section class="wrapper bg-gradient-primary">
+    <div class="container pt-12 pt-lg-8 pb-14 pb-md-17">
+      <div class="row text-center">
+        <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+          <h2 class="fs-16 text-uppercase text-primary mb-3">What We Do?</h2>
+          <h3 class="display-3 mb-10 px-xxl-10">
+            The service we offer is specifically designed to meet your needs.
+          </h3>
         </div>
-        <!-- /.row -->
-        <div class="row gx-lg-8 gx-xl-12 gy-11 px-xxl-5 text-center d-flex align-items-end">
-          <div class="col-lg-4">
-            <div class="px-md-15 px-lg-3">
-              <figure class="mb-6"><img class="img-fluid" src="../assets/img/illustrations/i24.png"  alt=""></figure>
-              <h3>Web Design</h3>
-              <p class="mb-2">Nulla vitae elit libero, a pharetra augue. Donec id elit non mi porta gravida at eget. Fusce dapibus tellus.</p>
-              <a href="#" class="more hover">Learn More</a>
-            </div>
-            <!--/.px -->
-          </div>
-          <!--/column -->
-          <div class="col-lg-4">
-            <div class="px-md-15 px-lg-3">
-              <figure class="mb-6"><img class="img-fluid" src="../assets/img/illustrations/i19.png"  alt=""></figure>
-              <h3>Graphic Design</h3>
-              <p class="mb-2">Maecenas faucibus mollis interdum. Vivamus sagittis lacus vel augue laoreet. Sed posuere consectetur.</p>
-              <a href="#" class="more hover">Learn More</a>
-            </div>
-            <!--/.px -->
-          </div>
-          <!--/column -->
-          <div class="col-lg-4">
-            <div class="px-md-15 px-lg-3">
-              <figure class="mb-6"><img class="img-fluid" src="../assets/img/illustrations/i18.png"  alt=""></figure>
-              <h3>3D Animation</h3>
-              <p class="mb-2">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Praesent commodo cursus magna scelerisque.</p>
-              <a href="#" class="more hover">Learn More</a>
-            </div>
-            <!--/.px -->
-          </div>
-          <!--/column -->
-        </div>
-        <!--/.row -->
       </div>
-      <!-- /.container -->
-    </section>
+
+      <!-- Hiển thị dữ liệu động -->
+      <div
+          class="row gx-lg-8 gx-xl-12 gy-11 px-xxl-5 text-center d-flex align-items-end"
+      >
+        <!-- Loading -->
+        <div v-if="store.loading" class="text-center py-10 w-100">
+          <p>Loading data from Supabase...</p>
+        </div>
+
+        <!-- Error -->
+        <div v-else-if="store.error" class="text-danger w-100">
+          <p>{{ store.error }}</p>
+        </div>
+
+        <!-- Data -->
+        <div
+            v-else
+            v-for="section in store.items"
+            :key="section.id"
+            class="col-lg-4"
+        >
+          <div class="px-md-15 px-lg-3">
+            <figure class="mb-6">
+              <img
+                  class="img-fluid"
+                  :src="resolveImage(section.image_url)"
+                  :alt="section.title"
+              />
+            </figure>
+            <h3>{{ section.title }}</h3>
+            <p class="mb-2">{{ section.description }}</p>
+            <a href="#" class="more hover">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
-<script>
+<script setup lang="ts">
 
-export default {
-  name: "Whatwedo",
-};
+import { onMounted } from 'vue'
+import { useItemStore } from '@/stores/useItemStore'
+
+const store = useItemStore()
+const SUPABASE_URL = import.meta.env.NUXT_PUBLIC_SUPABASE_URL
+
+
+onMounted(async () => {
+  await store.fetchItems('homepage_sections')
+})
+
+
+function resolveImage(path?: string) {
+
+  if (!path || path === 'noo' || path === 'null') {
+    return new URL('../assets/img/illustrations/i24.png', import.meta.url).href
+  }
+
+  if (path.startsWith('http')) {
+    return path
+  }
+
+  if (path.startsWith('/')) {
+    return `${SUPABASE_URL}/storage/v1/object/public${path}`
+  }
+
+  return new URL(`../assets/img/illustrations/${path}`, import.meta.url).href
+}
+
 </script>
