@@ -10,27 +10,16 @@
         </div>
       </div>
 
-      <!-- Hiển thị dữ liệu động -->
-      <div
-          class="row gx-lg-8 gx-xl-12 gy-11 px-xxl-5 text-center d-flex align-items-end"
-      >
-        <!-- Loading -->
+      <div class="row gx-lg-8 gx-xl-12 gy-11 px-xxl-5 text-center d-flex align-items-end">
         <div v-if="store.loading" class="text-center py-10 w-100">
           <p>Loading data from Supabase...</p>
         </div>
 
-        <!-- Error -->
         <div v-else-if="store.error" class="text-danger w-100">
           <p>{{ store.error }}</p>
         </div>
 
-        <!-- Data -->
-        <div
-            v-else
-            v-for="section in store.items"
-            :key="section.id"
-            class="col-lg-4"
-        >
+        <div v-else v-for="section in store.items" :key="section.id" class="col-lg-4">
           <div class="px-md-15 px-lg-3">
             <figure class="mb-6">
               <img
@@ -51,33 +40,35 @@
 
 <script setup lang="ts">
 
+defineOptions({
+  name: 'Whatwedo'
+})
+
 import { onMounted } from 'vue'
 import { useItemStore } from '@/stores/useItemStore'
 
 const store = useItemStore()
 const SUPABASE_URL = import.meta.env.NUXT_PUBLIC_SUPABASE_URL
 
-
 onMounted(async () => {
-  await store.fetchItems('homepage_sections')
+  await store.fetchItems('homepage_items') 
 })
 
-
 function resolveImage(path?: string) {
+  const baseUrl = import.meta.env.NUXT_PUBLIC_SUPABASE_URL
+  console.log('resolveImage path:', path)
 
-  if (!path || path === 'noo' || path === 'null') {
+  if (!path || ['noo', 'null', 'undefined'].includes(path)) {
     return new URL('../assets/img/illustrations/i24.png', import.meta.url).href
   }
 
-  if (path.startsWith('http')) {
-    return path
-  }
+  if (path.startsWith('http')) return path
 
-  if (path.startsWith('/')) {
-    return `${SUPABASE_URL}/storage/v1/object/public${path}`
-  }
+  if (path.startsWith('/images/') && baseUrl)
+    return `${baseUrl}/storage/v1/object/public${path}`
 
   return new URL(`../assets/img/illustrations/${path}`, import.meta.url).href
 }
+
 
 </script>
